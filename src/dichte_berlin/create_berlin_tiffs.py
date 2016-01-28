@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from argparse import ArgumentParser
-from extractiontools.raster_from_points import Points2Raster
+from extractiontools.raster_from_points import (Points2Raster,
+                                                Points2km2Raster)
 
 
 class ALKIS2Raster(Points2Raster):
@@ -13,17 +14,17 @@ class ALKIS2Raster(Points2Raster):
         define here, what to execute
         """
         self.alkis_gfl_to_raster()
-        self.export2tiff('geschossflaeche')
-        self.export2tiff('grundflaeche')
+        self.export2tiff('geschossflaeche_raster')
+        self.export2tiff('grundflaeche_raster')
 
     def alkis_gfl_to_raster(self):
         """convert ALKIS Geschlossfläche and Grundfläche to Raster"""
         self.create_alkis_geb_gfl()
-        self.create_raster_for_table(
+        self.create_raster_for_polygon(
             tablename='geschossflaeche',
             source_table='geobasisdaten.alkis_gebaeude_gfl',
             value_column='gfl', noData=0)
-        self.create_raster_for_table(
+        self.create_raster_for_polygon(
             tablename='grundflaeche',
             source_table='geobasisdaten.alkis_gebaeude_gfl',
             value_column='grfl', noData=0)
@@ -33,7 +34,7 @@ class ALKIS2Raster(Points2Raster):
         sql = """
 CREATE OR REPLACE VIEW geobasisdaten.alkis_gebaeude_gfl AS
 SELECT
-  g.id,
+  g.objectid,
   g.geom,
   st_area(g.geom) AS grfl,
   st_area(g.geom) * coalesce(g.aog, a.aog_default) AS gfl
@@ -71,9 +72,9 @@ if __name__ == '__main__':
                         dest="subfolder", default='tiffs')
     options = parser.parse_args()
 
-    z2r = Zensus2Raster(options,
-                        db=options.destination_db)
-    z2r.set_login(host=options.host,
+    model = ALKIS2km2Raster(options,
+                            db=options.destination_db)
+    model.set_login(host=options.host,
                   port=options.port,
                   user=options.user)
-    z2r.run()
+    model.run()

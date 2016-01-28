@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
-from distutils.extension import Extension
-from cythonhelpers.make_cython_extensions import make_extensions
+#from distutils.extension import Extension
+#from cythonhelpers.make_cython_extensions import make_extensions
 
 
 ext_modnames = []
@@ -31,6 +31,6 @@ setup(
     install_requires=[
         'setuptools',
         ],
-    ext_modules=make_extensions(ext_modnames),
+    #ext_modules=make_extensions(ext_modnames),
 )
 
