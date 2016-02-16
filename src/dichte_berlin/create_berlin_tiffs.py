@@ -16,6 +16,7 @@ class ALKIS2Raster(Points2Raster):
         self.alkis_gfl_to_raster()
         self.export2tiff('geschossflaeche_raster')
         self.export2tiff('grundflaeche_raster')
+        self.intersect_jobs()
 
     def alkis_gfl_to_raster(self):
         """convert ALKIS Geschlossfläche and Grundfläche to Raster"""
@@ -28,6 +29,15 @@ class ALKIS2Raster(Points2Raster):
             tablename='grundflaeche',
             source_table='geobasisdaten.alkis_gebaeude_gfl',
             value_column='grfl', noData=0)
+
+    def intersect_jobs(self):
+        """Intersect the Verkehrszellen with the raster data"""
+        weights = '{}.geschossflaeche_raster'.format(self.schema)
+        self.intersect_polygon_with_weighted_raster(tablename='jobs_ew_1',
+                                       source_table='geobasisdaten.vz_apl',
+                                       id_column='vbz_no',
+                                       value_column='summe_ew_1',
+                                       weights=weights)
 
     def create_alkis_geb_gfl(self):
         """Create view with alkis Geschossflaeche"""
