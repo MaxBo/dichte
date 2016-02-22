@@ -27,7 +27,7 @@ class Data2Raster(Zensus2Raster):
 
 class Data2km2Raster(Data2Raster, Points2km2Raster):
     """Convert data to raster data"""
-    schema = 'dichte_km2'
+    schema = 'xx_dichte_km2'
 
 
 

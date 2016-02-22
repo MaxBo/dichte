@@ -7,7 +7,7 @@ from extractiontools.raster_from_points import (Points2Raster,
 
 class ALKIS2Raster(Points2Raster):
     """Convert data to raster data"""
-    schema = 'dichte_ha'
+    schema = 'xx_dichte_ha'
 
     def do_stuff(self):
         """
@@ -225,7 +225,7 @@ class ALKIS2Raster(Points2Raster):
 
 class ALKIS2km2Raster(ALKIS2Raster, Points2km2Raster):
     """Convert data to raster data"""
-    schema = 'dichte_km2'
+    schema = 'xx_dichte_km2'
 
 
 if __name__ == '__main__':

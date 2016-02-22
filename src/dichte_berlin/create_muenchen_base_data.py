@@ -5,62 +5,58 @@ from extractiontools.raster_from_points import (Points2Raster,
                                                 Points2km2Raster)
 
 
-class Data2Raster(Points2Raster):
+class ALKIS2Raster(Points2Raster):
     """Convert data to raster data"""
-    schema = 'tourismus'
+    schema = 'xx_dichte_ha'
 
     def do_stuff(self):
         """
         define here, what to execute
         """
-        self.create_tourism_raster()
+        #self.gmes_to_raster()
+        self.alkis_gfl_to_raster()
+        #self.export2tiff('geschossflaeche_raster')
+        #self.export2tiff('grundflaeche_raster')
 
-    def create_raster(self,
-                      tablename,
-                      pixeltype='32BF',
-                      noData=0,
-                      value_col='value'):
+    def alkis_gfl_to_raster(self):
+        """convert ALKIS Geschlossfläche and Grundfläche to Raster"""
+        self.create_alkis_geb_gfl()
+        self.create_raster_for_point(
+            tablename='geschossflaeche',
+            source_table='gebaeude.gebaeude_gfl',
+            value_column='gfl', noData=0)
+        self.create_raster_for_point(
+            tablename='grundflaeche',
+            source_table='gebaeude.gebaeude_gfl',
+            value_column='grfl', noData=0)
+
+    def create_alkis_geb_gfl(self):
+        """Create view with alkis Geschossflaeche"""
+        sql = """
+        CREATE OR REPLACE VIEW gebaeude.gebaeude_gfl AS
+        SELECT
+        g.objectid AS objectid,
+        g.geom,
+        flaeche_qm AS grfl,
+        flaeche_qm * geschosse AS gfl
+        FROM gebaeude.gebaeude g
+        WHERE geschosse > 0
         """
-        intersect feature with raster and create raster tiff
-        """
-
-        self.point2raster(
-            point_feature='{sc}.{tn}'.format(sc=self.schema,
-                                                 tn=tablename),
-            geom_col='pnt_laea',
-            value_col=value_col,
-            target_raster='{sc}.{tn}_raster'.format(sc=self.schema,
-                                                    tn=tablename),
-            pixeltype=pixeltype,
-            srid=self.srid,
-            reference_raster=self.reference_raster,
-            raster_pkey='rid',
-            raster_col='rast',
-            band=1,
-            noData=noData,
-            overwrite=True)
+        self.run_query(sql)
 
 
-    def create_tourism_raster(self):
-        """Intersect the Verkehrszellen with the raster data"""
-        self.create_raster('laea_ha_flickr',
-                           pixeltype='32BF', noData=0,
-                           value_col='pictures')
-
-
-
-class Data2km2Raster(Data2Raster, Points2km2Raster):
+class ALKIS2km2Raster(ALKIS2Raster, Points2km2Raster):
     """Convert data to raster data"""
     schema = 'xx_dichte_km2'
 
 
 if __name__ == '__main__':
 
-    parser = ArgumentParser(description="Create Raster with Berlin Density Data")
+    parser = ArgumentParser(description="Create Raster with München Density Data")
 
     parser.add_argument("-n", '--name', action="store",
                         help="Name of destination database",
-                        dest="destination_db", default='dichte_wien')
+                        dest="destination_db", default='dichte_muenchen')
 
     parser.add_argument('--host', action="store",
                         help="host",
@@ -80,8 +76,8 @@ if __name__ == '__main__':
                         dest="gridsize", default='km2')
     options = parser.parse_args()
 
-    Models = {'km2': Data2km2Raster,
-              'ha': Data2Raster,}
+    Models = {'km2': ALKIS2km2Raster,
+              'ha': ALKIS2Raster,}
     Model = Models[options.gridsize]
 
     model = Model(options,
