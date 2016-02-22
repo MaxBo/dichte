@@ -13,8 +13,8 @@ class Data2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        #self.intersect_einwohner()
-        #self.intersect_jobs()
+        self.intersect_einwohner()
+        self.intersect_jobs()
 
     def intersect_jobs(self):
         """Intersect the Verkehrszellen with the raster data"""
