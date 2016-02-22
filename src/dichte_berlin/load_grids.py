@@ -11,6 +11,40 @@ class Sim(object):
         self._grid_folder = grid_folder
 
 
+class Copy2FGDB(Extract):
+    def __init__(self, options):
+
+        """"""
+        self.options = options
+        self.check_platform()
+        self.login1 = Login(self.options.host,
+                            self.options.port,
+                            self.options.user,
+                            db=self.options.destination_db)
+
+    def pg_raster_to_array(self, schema, tablename):
+        """
+        read array from postgis raster table
+        """
+        virtual_path = '/vsimem/from_postgis'
+        with Connection(self.login1) as conn:
+            cur = conn.cursor()
+            sql = '''
+SELECT ST_AsGDALRaster(st_union(rast), 'GTiff')
+FROM {schema}.{table};
+            '''.format(schema=schema, table=tablename)
+            cur.execute(sql)
+            # read results
+            gdal.FileFromMemBuffer(vsipath, bytes(cur.fetchone()[0]))
+            ds = gdal.Open(vsipath)
+            arr = ds.GetVirtualMemArray()
+            self.geotransform = ds.GetGeoTransform()
+            self.ysize, self.xsize = arr.shape
+            ds = None
+            gdal.Unlink(vsipath)
+            return arr
+
+
 
 if __name__ == '__main__':
     grid_folder = r'E:\GGR\Berlin Dichte\30 Gis\31 gisserver_backup\tiffs'
