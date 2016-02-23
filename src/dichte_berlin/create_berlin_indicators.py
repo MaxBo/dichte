@@ -41,7 +41,7 @@ SELECT
   b.schluessel8,
   b.geom,
   b.einwohner
-FROM geobasisdaten.ew_hauptblock_jahr b
+FROM geobasisdaten.ew_hauptblock_jahr_matview b
 WHERE jahr = {jahr};
         """
         for jahr in [1991, 1995, 2000, 2005, 2010, 2014]:
