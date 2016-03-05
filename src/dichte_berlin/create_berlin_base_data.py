@@ -13,10 +13,39 @@ class ALKIS2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.gmes_to_raster()
+        #self.gmes_to_raster()
         #self.alkis_gfl_to_raster()
         #self.export2tiff('geschossflaeche_raster')
         #self.export2tiff('grundflaeche_raster')
+        #self.create_kernstadt_raster()
+        self.gmes_weighted()
+
+    def create_kernstadt_raster(self):
+        """Convert kernstadt to raster"""
+        sql = """
+CREATE OR REPLACE VIEW verwaltungsgrenzen.kernstadt AS
+SELECT
+g.ags,
+g.gen,
+CASE WHEN ags = '{ags}' THEN 1
+ELSE 0
+END AS kernstadt,
+g.geom
+FROM verwaltungsgrenzen.gem_2014_ew_svb g;
+
+CREATE OR REPLACE VIEW {sc}.kernstadt_pnt AS
+SELECT
+l.cellcode,
+g.kernstadt AS value,
+l.pnt_laea,
+row_number() OVER(ORDER BY l.cellcode)::integer AS rn
+
+FROM verwaltungsgrenzen.kernstadt g,
+laea.laea_vector_100 l
+WHERE st_intersects(l.pnt, g.geom);
+        """
+        self.run_query(sql.format(ags=self.kernstadt_ags, sc=self.schema))
+        self.create_raster_for_table(tablename='kernstadt', pixeltype='1BB', noData=-1)
 
     def alkis_gfl_to_raster(self):
         """convert ALKIS Geschlossfläche and Grundfläche to Raster"""
@@ -44,6 +73,21 @@ class ALKIS2Raster(Points2Raster):
         ON g.bat = a.bat
         """
         self.run_query(sql)
+
+    def gmes_weighted(self):
+        """
+weighted gmes data
+        """
+        self.create_raster_for_polygon(
+            tablename='gmes12_weight_wohnen',
+            source_table='gmes.density_weight',
+            value_column='wohnen', noData=0)
+
+        self.create_raster_for_polygon(
+            tablename='gmes12_weight_gewerbe',
+            source_table='gmes.density_weight',
+            value_column='gewerbe', noData=0)
+
 
     def gmes_to_raster(self):
         # convert GMES Flaechen to Raster"""
@@ -252,6 +296,11 @@ if __name__ == '__main__':
                         help="gridsize to use", type=str,
                         choices=['km2', 'ha'],
                         dest="gridsize", default='km2')
+    parser.add_argument('--ags', action="store",
+                        help="ags der Kernstadt", type=str,
+                        dest="kernstadt", default='11000000')
+
+
     options = parser.parse_args()
 
     Models = {'km2': ALKIS2km2Raster,
@@ -263,4 +312,5 @@ if __name__ == '__main__':
     model.set_login(host=options.host,
                   port=options.port,
                   user=options.user)
+    model.kernstadt_ags = options.kernstadt
     model.run()

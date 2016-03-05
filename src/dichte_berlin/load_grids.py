@@ -234,34 +234,43 @@ if __name__ == '__main__':
                         help="Name of destination database",
                         dest="destination_db", default='dichte_berlin')
 
-    parser.add_argument('--host', action="store",
+    arg_db = parser.add_argument_group('DB_Config', 'Database connection arguments')
+    arg_db.add_argument('--host', action="store",
                         help="host",
                         dest="host", default='localhost')
-    parser.add_argument("-p", '--port', action="store",
+    arg_db.add_argument("-p", '--port', action="store",
                         help="port", type=int,
                         dest="port", default=5432)
-    parser.add_argument("-U", '--user', action="store",
+    arg_db.add_argument("-U", '--user', action="store",
                         help="user", type=str,
                         dest="user", default='osm')
     parser.add_argument('--subfolder', action="store",
                         help="subfolder to store the tiffs", type=str,
                         dest="subfolder", default='tiffs')
-    parser.add_argument('--schema', action="store",
-                        help="schema of raster to smooth", type=str,
-                        dest="schema", default='xx_dichte_ha')
-    parser.add_argument('--tablename', action="store",
-                        help="tablename of raster to smooth", type=str,
-                        dest="tablename", default='einwohner_2014_raster')
+
+    table_grp = parser.add_argument_group('PostgisRaster', 'Postgis Raster to smooth')
+    table_grp.add_argument('--schema', action="store",
+                           help="schema of raster to smooth", type=str,
+                           dest="schema", default='xx_dichte_ha')
+    table_grp.add_argument('--tablename', action="store",
+                           help="tablename of raster to smooth", type=str,
+                           dest="tablename", default='einwohner_2014_raster')
+
+    infile_grp = parser.add_argument_group('Tiff', 'Tiff to Smooth')
+    infile_grp.add_argument('--infile', action="store",
+                            help="path to geotiff-raster", type=str,
+                            dest="in_file", default=None)
+
     parser.add_argument('--outfolder', action="store",
                         help="folder to store the smoothed raster", type=str,
                         dest="out_folder", default=None)
-    parser.add_argument('--infile', action="store",
-                        help="path to geotiff-raster", type=str,
-                        dest="in_file", default=None)
-    parser.add_argument('--kernelsize', action="store",
+
+
+    kernel_grp = parser.add_argument_group('KernelParams', 'Kernel Parameters')
+    kernel_grp.add_argument('--kernelsize', action="store",
                         help="size of the kernel in pixel from the center", type=int,
                         dest="kernelsize", default=4)
-    parser.add_argument('--kernel_beta', action="store",
+    kernel_grp.add_argument('--kernel_beta', action="store",
                         help="distance decay parameter of the kernel ", type=float,
                         dest="beta", default=-1)
     options = parser.parse_args()

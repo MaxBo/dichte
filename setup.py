@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from setuptools import setup, find_packages
 #from distutils.extension import Extension
 #from cythonhelpers.make_cython_extensions import make_extensions

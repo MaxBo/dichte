@@ -13,11 +13,21 @@ class Data2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.intersect_einwohner()
-        self.intersect_jobs()
+        #self.intersect_einwohner()
+        #self.intersect_jobs()
+        self.intersect_ew_jobs_with_gmes()
 
     def intersect_jobs(self):
         """Intersect the Verkehrszellen with the raster data"""
+        weights = '{}.geschossflaeche_raster'.format(self.schema)
+        self.intersect_polygon_with_weighted_raster(tablename='jobs_ew_1',
+                                       source_table='geobasisdaten.vz_apl',
+                                       id_column='vbz_no',
+                                       value_column='summe_ew_1',
+                                       weights=weights)
+
+    def intersect_jobs_umland_with_gmes(self):
+        """Intersect the Jobs with the gmes data"""
         weights = '{}.geschossflaeche_raster'.format(self.schema)
         self.intersect_polygon_with_weighted_raster(tablename='jobs_ew_1',
                                        source_table='geobasisdaten.vz_apl',
@@ -52,6 +62,24 @@ WHERE jahr = {jahr};
                 id_column='schluessel8',
                 value_column='einwohner',
                 weights=weights)
+
+    def intersect_ew_jobs_with_gmes(self):
+        """
+        Intersect Einwohner und Jobs with weighted gmes data
+        """
+        self.intersect_polygon_with_weighted_raster(
+            tablename='gmes_ew',
+            source_table='verwaltungsgrenzen.gem_2014_ew_svb',
+            id_column='ogc_fid',
+            value_column='einwohner',
+            weights='{}.gmes12_weight_wohnen_raster'.format(self.schema))
+        self.intersect_polygon_with_weighted_raster(
+            tablename='gmes_jobs',
+            source_table='verwaltungsgrenzen.gem_2014_ew_svb',
+            id_column='ogc_fid',
+            value_column='svb_ao',
+            weights='{}.gmes12_weight_gewerbe_raster'.format(self.schema))
+
 
     def create_ew_view(self):
         """Create View with Einwohnern"""
