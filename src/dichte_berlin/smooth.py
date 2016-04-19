@@ -51,11 +51,15 @@ FROM {schema}.{table};
         """
         read an array from a geotiff
         """
+        in_file = in_file.strip()
         ds = gdal.Open(in_file)
         self.grids = Grids.from_gdal_tiff(ds)
         ds = None
         fn = os.path.splitext(os.path.split(in_file)[-1])[0]
-        return getattr(self.grids, fn).array
+        arr = getattr(self.grids, fn).array
+        #arr[arr < 0] = 0
+        #arr[arr > 2000] = 0
+        return arr
 
 
     def build_weights(self,
@@ -93,7 +97,7 @@ FROM {schema}.{table};
         # Gewichtung der Bezugsflächen 1
         freq = np.ones(input_array.shape)
         # only include inhabited raster cells into Bezugsflächen
-        freq[input_array == 0] = 0
+        freq[input_array <= 0] = 0
         return freq
 
 
@@ -287,7 +291,7 @@ if __name__ == '__main__':
         val = sm.pg_raster_to_array(
             schema=options.schema,
             tablename=filename,
-            grid_folder=options.out_folder)
+            grid_folder=options.out_folder.strip())
     result_table = '{}_smoothed'.format(filename)
     weights = sm.build_weights(size=options.kernelsize, beta=options.beta)
     freq = sm.build_frequencies(val)
