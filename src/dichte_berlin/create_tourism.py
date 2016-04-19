@@ -25,7 +25,7 @@ class Data2Raster(Points2Raster):
         """
 
         self.point2raster(
-            point_feature='{sc}.{tn}'.format(sc=self.schema,
+            point_feature='{sc}.{tn}'.format(sc='tourismus',
                                                  tn=tablename),
             geom_col='pnt_laea',
             value_col=value_col,

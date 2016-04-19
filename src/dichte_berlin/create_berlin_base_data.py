@@ -17,8 +17,9 @@ class ALKIS2Raster(Points2Raster):
         #self.alkis_gfl_to_raster()
         #self.export2tiff('geschossflaeche_raster')
         #self.export2tiff('grundflaeche_raster')
-        #self.create_kernstadt_raster()
-        self.gmes_weighted()
+        self.create_kernstadt_raster()
+        #self.gmes_weighted()
+        #self.alkis_wfl_gfl_to_raster()
 
     def create_kernstadt_raster(self):
         """Convert kernstadt to raster"""
@@ -59,6 +60,18 @@ WHERE st_intersects(l.pnt, g.geom);
             source_table='geobasisdaten.alkis_gebaeude_gfl',
             value_column='grfl', noData=0)
 
+    def alkis_wfl_gfl_to_raster(self):
+        """convert ALKIS Geschlossfläche and Grundfläche to Raster"""
+        #self.create_alkis_geb_gfl()
+        self.create_raster_for_polygon(
+            tablename='wohnflaeche',
+            source_table='geobasisdaten.geobasisdaten_wfl_gewerbfl',
+            value_column='wohnfl', noData=0)
+        self.create_raster_for_polygon(
+            tablename='gewerbl_nutzfl',
+            source_table='geobasisdaten.geobasisdaten_wfl_gewerbfl',
+            value_column='gewerbl_nutzfl', noData=0)
+
     def create_alkis_geb_gfl(self):
         """Create view with alkis Geschossflaeche"""
         sql = """
@@ -92,28 +105,39 @@ weighted gmes data
     def gmes_to_raster(self):
         # convert GMES Flaechen to Raster"""
         #self.create_gmes06_vfl()
-        #self.create_gmes12_vfl()
+        self.create_gmes12_vfl()
         #self.create_gmes06_sfl_wohnen()
-        #self.create_gmes12_sfl_wohnen()
+        self.create_gmes12_sfl_wohnen()
         #self.create_gmes06_sfl_gewerbe()
-        #self.create_gmes12_sfl_gewerbe()
+        self.create_gmes12_sfl_gewerbe()
         #self.create_gmes06_sfl_gruen_sport()
-        #self.create_gmes12_sfl_gruen_sport()
+        self.create_gmes12_sfl_gruen_sport()
+        self.conn.commit()
 
-        # create Polygons for converted Rasters
-        self.create_raster_for_polygon(
-            tablename='gmes06_vfl',
-            source_table='gmes.gmes06_vfl',
-            value_column='area', noData=0)
+        #create Polygons for converted Rasters
+        #self.create_raster_for_polygon(
+            #tablename='gmes06_vfl',
+            #source_table='gmes.gmes06_vfl',
+            #value_column='area', noData=0)
+
+        #self.create_raster_for_polygon(
+            #tablename='gmes06_sfl_wohnen',
+            #source_table='gmes.gmes06_sfl_wohnen',
+            #value_column='area', noData=0)
+
+        #self.create_raster_for_polygon(
+            #tablename='gmes06_sfl_gewerbe',
+            #source_table='gmes.gmes06_sfl_gewerbe',
+            #value_column='area', noData=0)
+
+        #self.create_raster_for_polygon(
+            #tablename='gmes06_sfl_gruen_sport',
+            #source_table='gmes.gmes06_sfl_gruen_sport',
+            #value_column='area', noData=0)
 
         self.create_raster_for_polygon(
             tablename='gmes12_vfl',
             source_table='gmes.gmes12_vfl',
-            value_column='area', noData=0)
-
-        self.create_raster_for_polygon(
-            tablename='gmes06_sfl_wohnen',
-            source_table='gmes.gmes06_sfl_wohnen',
             value_column='area', noData=0)
 
         self.create_raster_for_polygon(
@@ -122,18 +146,8 @@ weighted gmes data
             value_column='area', noData=0)
 
         self.create_raster_for_polygon(
-            tablename='gmes06_sfl_gewerbe',
-            source_table='gmes.gmes06_sfl_gewerbe',
-            value_column='area', noData=0)
-
-        self.create_raster_for_polygon(
             tablename='gmes12_sfl_gewerbe',
             source_table='gmes.gmes12_sfl_gewerbe',
-            value_column='area', noData=0)
-
-        self.create_raster_for_polygon(
-            tablename='gmes06_sfl_gruen_sport',
-            source_table='gmes.gmes06_sfl_gruen_sport',
             value_column='area', noData=0)
 
         self.create_raster_for_polygon(
@@ -278,7 +292,7 @@ if __name__ == '__main__':
 
     parser.add_argument("-n", '--name', action="store",
                         help="Name of destination database",
-                        dest="destination_db", default='dichte_berlin')
+                        dest="destination_db", default='dichte_hamburg')
 
     parser.add_argument('--host', action="store",
                         help="host",

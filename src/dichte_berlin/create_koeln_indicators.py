@@ -8,47 +8,35 @@ from extractiontools.raster_from_points import (Points2Raster,
 class Jobs2Raster(Points2Raster):
     """Convert data to raster data"""
     #schema = 'arbeitsplaetze'
-    schema = 'xx_dichte_ha'
     schema_gfl = 'xx_dichte_ha'
+    schema = 'xx_dichte_ha'
     gridsize = 'ha'
 
     def do_stuff(self):
         """
         define here, what to execute
         """
-        #self.intersect_jobs()
         #self.gmes_weighted()
-        #self.intersect_jobs_umland()
-        #self.intersect_einwohner_umland()
+        self.intersect_jobs_umland()
 
     def intersect_jobs(self):
         """Intersect the Verkehrszellen with the raster data"""
         weights = '{}.geschossflaeche_raster'.format(self.schema_gfl)
         self.intersect_polygon_with_weighted_raster(
-            tablename='jobs_2005_{gr}'.format(gr=self.gridsize),
-            source_table='arbeitsplaetze.ap',
-            id_column='zgb_id ',
-            value_column='ap_gesamt',
+            tablename='jobs_2015_{gr}'.format(gr=self.gridsize),
+            source_table='raumeinheiten.vz_ew_jobs',
+            id_column='no',
+            value_column='jobs',
             weights=weights)
 
     def intersect_jobs_umland(self):
         """Intersect the Verkehrszellen with the raster data"""
         weights = '{}.gmes12_weight_gewerbe_raster'.format(self.schema_gfl)
         self.intersect_polygon_with_weighted_raster(
-            tablename='jobs_2013_{gr}'.format(gr=self.gridsize),
-            source_table='gemeinden.gem_ew_apl',
-            id_column='gem_nr',
-            value_column='jobs',
-            weights=weights)
-
-    def intersect_einwohner_umland(self):
-        """Intersect the Verkehrszellen with the raster data"""
-        weights = '{}.gmes12_weight_gewerbe_raster'.format(self.schema_gfl)
-        self.intersect_polygon_with_weighted_raster(
-            tablename='einwohner_2013_{gr}'.format(gr=self.gridsize),
-            source_table='gemeinden.gem_ew_apl',
-            id_column='gem_nr',
-            value_column='einwohner',
+            tablename='jobs_2014_{gr}'.format(gr=self.gridsize),
+            source_table='verwaltungsgrenzen.gem_2014_ew_svb_region',
+            id_column='ogc_fid',
+            value_column='svb_ao',
             weights=weights)
 
     def gmes_weighted(self):
@@ -66,6 +54,7 @@ weighted gmes data
             value_column='gewerbe', noData=0)
 
 
+
 class Einwohner2Raster(Points2Raster):
     """Convert data to raster data"""
     schema = 'einwohner'
@@ -76,16 +65,16 @@ class Einwohner2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.intersect_einwohner()
+        #self.intersect_einwohner()
 
     def intersect_einwohner(self):
         """Intersect the Verkehrszellen with the raster data"""
         weights = '{}.geschossflaeche_raster'.format(self.schema_gfl)
         self.intersect_polygon_with_weighted_raster(
-            tablename='einwohner_{gr}'.format(gr=self.gridsize),
-            source_table='einwohner.ew_hws',
-            id_column='blk_id',
-            value_column='ew_hws',
+            tablename='einwohner_2014_{gr}'.format(gr=self.gridsize),
+            source_table='raumeinheiten.vz_ew_jobs',
+            id_column='no',
+            value_column='einwohner',
             weights=weights)
 
 
@@ -104,11 +93,11 @@ class Einwohner2km2Raster(Einwohner2Raster, Points2km2Raster):
 
 if __name__ == '__main__':
 
-    parser = ArgumentParser(description="Create Raster with Wien Density Data")
+    parser = ArgumentParser(description="Create Raster with München Density Data")
 
     parser.add_argument("-n", '--name', action="store",
                         help="Name of destination database",
-                        dest="destination_db", default='dichte_wien')
+                        dest="destination_db", default='dichte_koeln')
 
     parser.add_argument('--host', action="store",
                         help="host",

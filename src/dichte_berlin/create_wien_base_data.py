@@ -38,8 +38,9 @@ class ALKIS2Raster(Points2Raster):
         g.id AS objectid,
         g.geom,
         st_area(g.geom) AS grfl,
-        g.geschossflaeche AS gfl
+        (g.geschossflaeche / 1.2)::integer AS gfl
         FROM gebaeude.fmzk g
+        WHERE g.geschossflaeche > 0;
         """
         self.run_query(sql)
 

@@ -67,12 +67,12 @@ WHERE jahr = {jahr};
         """
         Intersect Einwohner und Jobs with weighted gmes data
         """
-        self.intersect_polygon_with_weighted_raster(
-            tablename='gmes_ew',
-            source_table='verwaltungsgrenzen.gem_2014_ew_svb',
-            id_column='ogc_fid',
-            value_column='einwohner',
-            weights='{}.gmes12_weight_wohnen_raster'.format(self.schema))
+        #self.intersect_polygon_with_weighted_raster(
+            #tablename='gmes_ew',
+            #source_table='verwaltungsgrenzen.gem_2014_ew_svb',
+            #id_column='ogc_fid',
+            #value_column='einwohner',
+            #weights='{}.gmes12_weight_wohnen_raster'.format(self.schema))
         self.intersect_polygon_with_weighted_raster(
             tablename='gmes_jobs',
             source_table='verwaltungsgrenzen.gem_2014_ew_svb',

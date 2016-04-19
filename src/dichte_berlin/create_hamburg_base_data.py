@@ -20,26 +20,26 @@ class ALKIS2Raster(Points2Raster):
 
     def alkis_gfl_to_raster(self):
         """convert ALKIS Geschlossfläche and Grundfläche to Raster"""
-        self.create_alkis_geb_gfl()
+        #self.create_alkis_geb_gfl()
         self.create_raster_for_polygon(
             tablename='geschossflaeche',
-            source_table='geobasisdaten.alkis_gebaeude_gfl',
+            source_table='raumeinheiten.alkis_gebaeude_gfl',
             value_column='gfl', noData=0)
         self.create_raster_for_polygon(
             tablename='grundflaeche',
-            source_table='geobasisdaten.alkis_gebaeude_gfl',
+            source_table='raumeinheiten.alkis_gebaeude_gfl',
             value_column='grfl', noData=0)
 
     def create_alkis_geb_gfl(self):
         """Create view with alkis Geschossflaeche"""
         sql = """
-        CREATE OR REPLACE VIEW geobasisdaten.alkis_gebaeude_gfl AS
+        CREATE OR REPLACE VIEW raumeinheiten.alkis_gebaeude_gfl AS
         SELECT
         g.ogc_fid AS objectid,
         g.geom,
         st_area(g.geom) AS grfl,
         st_area(g.geom) * coalesce(g.anzahlderoberirdischengeschosse, 0) AS gfl
-        FROM geobasisdaten.gebaeude g
+        FROM raumeinheiten.gebaeude g
         """
         self.run_query(sql)
 
