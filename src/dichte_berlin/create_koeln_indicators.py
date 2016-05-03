@@ -31,10 +31,10 @@ class Jobs2Raster(Points2Raster):
 
     def intersect_jobs_umland(self):
         """Intersect the Verkehrszellen with the raster data"""
-        weights = '{}.gmes12_weight_gewerbe_raster'.format(self.schema_gfl)
+        weights = '{}.gmes_corine_gewerbe_weight_raster'.format(self.schema_gfl)
         self.intersect_polygon_with_weighted_raster(
-            tablename='jobs_2014_{gr}'.format(gr=self.gridsize),
-            source_table='verwaltungsgrenzen.gem_2014_ew_svb_region',
+            tablename='jobs_umland_2014_{gr}'.format(gr=self.gridsize),
+            source_table='verwaltungsgrenzen.gem_2014_region',
             id_column='ogc_fid',
             value_column='svb_ao',
             weights=weights)

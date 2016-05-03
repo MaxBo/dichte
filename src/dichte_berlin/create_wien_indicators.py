@@ -20,6 +20,7 @@ class Jobs2Raster(Points2Raster):
         #self.gmes_weighted()
         #self.intersect_jobs_umland()
         #self.intersect_einwohner_umland()
+        self.intersect_jobs_corine_umland()
 
     def intersect_jobs(self):
         """Intersect the Verkehrszellen with the raster data"""
@@ -32,10 +33,20 @@ class Jobs2Raster(Points2Raster):
             weights=weights)
 
     def intersect_jobs_umland(self):
-        """Intersect the Verkehrszellen with the raster data"""
+        """Intersect the Verkehrszellen with the gmes raster data"""
         weights = '{}.gmes12_weight_gewerbe_raster'.format(self.schema_gfl)
         self.intersect_polygon_with_weighted_raster(
             tablename='jobs_2013_{gr}'.format(gr=self.gridsize),
+            source_table='gemeinden.gem_ew_apl',
+            id_column='gem_nr',
+            value_column='jobs',
+            weights=weights)
+
+    def intersect_jobs_corine_umland(self):
+        """Intersect the Verkehrszellen with the corine raster data"""
+        weights = '{}.corine_gewerbe_weight_raster'.format(self.schema_gfl)
+        self.intersect_polygon_with_weighted_raster(
+            tablename='jobs_2013_corine',
             source_table='gemeinden.gem_ew_apl',
             id_column='gem_nr',
             value_column='jobs',
@@ -76,7 +87,7 @@ class Einwohner2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.intersect_einwohner()
+        #self.intersect_einwohner()
 
     def intersect_einwohner(self):
         """Intersect the Verkehrszellen with the raster data"""

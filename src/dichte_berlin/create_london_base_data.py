@@ -15,12 +15,13 @@ class ALKIS2Raster(Points2Raster):
         define here, what to execute
         """
         #self.gmes_to_raster()
-        self.alkis_gfl_to_raster()
+        #self.alkis_gfl_to_raster()
         #self.export2tiff('geschossflaeche_raster')
         #self.export2tiff('grundflaeche_raster')
         #self.intersect_residential_commercial_m2_with_buildings()
         #self.intersect_jobs()
         #self.intersect_einwohner()
+        self.intersect_jobs_umland()
 
     def intersect_residential_commercial_m2_with_buildings(self):
         """Intersect the Wohnfläche with the Gebäudegrundfläche"""
@@ -77,6 +78,16 @@ class ALKIS2Raster(Points2Raster):
             tablename='jobs'.format(gr=self.gridsize),
             source_table='arbeitsplaetze.wards_jobs',
             id_column='id ',
+            value_column='jobs',
+            weights=weights)
+
+    def intersect_jobs_umland(self):
+        """Intersect the LSOA with the Corine raster data"""
+        weights = '{}.corine_gewerbe_weight_raster'.format(self.schema)
+        self.intersect_polygon_with_weighted_raster(
+            tablename='jobs_umland_lsoa_{gr}'.format(gr=self.gridsize),
+            source_table='arbeitsplaetze.lsoa_jobs',
+            id_column='code',
             value_column='jobs',
             weights=weights)
 

@@ -7,7 +7,7 @@ from extractiontools.raster_from_points import (Points2Raster,
 
 class Data2Raster(Points2Raster):
     """Convert data to raster data"""
-    schema = 'tourismus'
+    schema = 'xx_dichte_ha'
 
     def do_stuff(self):
         """
@@ -23,27 +23,32 @@ class Data2Raster(Points2Raster):
         """
         intersect feature with raster and create raster tiff
         """
+        
+        self.create_raster_for_point('flickr', 'tourismus.flickr', 
+                                    value_column=None, 
+                                    pixeltype='32BF', 
+                                    noData=0)
 
-        self.point2raster(
-            point_feature='{sc}.{tn}'.format(sc='tourismus',
-                                                 tn=tablename),
-            geom_col='pnt_laea',
-            value_col=value_col,
-            target_raster='{sc}.{tn}_raster'.format(sc=self.schema,
-                                                    tn=tablename),
-            pixeltype=pixeltype,
-            srid=self.srid,
-            reference_raster=self.reference_raster,
-            raster_pkey='rid',
-            raster_col='rast',
-            band=1,
-            noData=noData,
-            overwrite=True)
+        #self.point2raster(
+            #point_feature='{sc}.{tn}'.format(sc='tourismus',
+                                                 #tn=tablename),
+            #geom_col='geom',
+            #value_col=value_col,
+            #target_raster='{sc}.{tn}_raster'.format(sc=self.schema,
+                                                    #tn=tablename),
+            #pixeltype=pixeltype,
+            #srid=self.srid,
+            #reference_raster=self.reference_raster,
+            #raster_pkey='rid',
+            #raster_col='rast',
+            #band=1,
+            #noData=noData,
+            #overwrite=True)
 
 
     def create_tourism_raster(self):
         """Intersect the Verkehrszellen with the raster data"""
-        self.create_raster('laea_ha_flickr',
+        self.create_raster('flickr',
                            pixeltype='32BF', noData=0,
                            value_col='pictures')
 
@@ -60,7 +65,7 @@ if __name__ == '__main__':
 
     parser.add_argument("-n", '--name', action="store",
                         help="Name of destination database",
-                        dest="destination_db", default='dichte_wien')
+                        dest="destination_db", default='dichte_london')
 
     parser.add_argument('--host', action="store",
                         help="host",
@@ -77,7 +82,7 @@ if __name__ == '__main__':
     parser.add_argument('--gridsize', action="store",
                         help="gridsize to use", type=str,
                         choices=['km2', 'ha'],
-                        dest="gridsize", default='km2')
+                        dest="gridsize", default='ha')
     options = parser.parse_args()
 
     Models = {'km2': Data2km2Raster,
