@@ -15,7 +15,7 @@ class Jobs2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.intersect_jobs()
+        #self.intersect_jobs()
 
     def intersect_jobs(self):
         """Intersect the Verkehrszellen with the raster data"""
@@ -37,7 +37,7 @@ class Einwohner2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.intersect_einwohner()
+        self.intersect_einwohner_jahre()
 
     def intersect_einwohner(self):
         """Intersect the Verkehrszellen with the raster data"""
@@ -49,6 +49,21 @@ class Einwohner2Raster(Points2Raster):
             value_column='hauptwohnsitz',
             weights=weights)
 
+    def intersect_einwohner_viertel_jahr(self, jahr):
+        """Intersect the Verkehrszellen with the raster data"""
+        weights = 'einwohner.einwohner_{}_raster'.format(self.gridsize)
+        self.intersect_polygon_with_weighted_raster(
+            tablename='einwohner_{y}_{gr}'.format(y=jahr, gr=self.gridsize),
+            source_table='einwohner.matview_viertel_zeitreihe',
+            id_column='nr',
+            value_column='ew_{y}'.format(y=jahr),
+            weights=weights)
+
+    def intersect_einwohner_jahre(self):
+        """
+        """
+        for jahr in [2000, 2006, 2012, 2015]:
+            self.intersect_einwohner_viertel_jahr(jahr)
 
 class Jobs2km2Raster(Jobs2Raster, Points2km2Raster):
     """Convert data to raster data"""
