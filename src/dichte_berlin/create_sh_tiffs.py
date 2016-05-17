@@ -18,11 +18,12 @@ class Einrichtungen2Raster(Points2Raster):
         #self.intersect_point(tablename, schema)
         self.export_geotiff(schema, tablename, nodata)
 
-    def intersect_point(self, tablename, schema):
+    def intersect_point(self, tablename, schema, value_column=None):
         self.create_raster_for_point(
             tablename='{tn}'.format(tn=tablename),
             source_table='{sc}.{tn}'.format(sc=schema,
-                                            tn=tablename))
+                                            tn=tablename),
+            value_column=value_column)
 
     def export_geotiff(self, schema, tablename, nodata=-1):
         sql="""
@@ -58,12 +59,19 @@ class Einrichtungen2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        self.intersect_bildung()
-        self.intersect_gesundheit()
-        self.intersect_kultur()
-        self.intersect_oeff_dl()
-        self.intersect_priv_dl()
-        self.intersect_sport()
+        #self.intersect_bildung()
+        #self.intersect_gesundheit()
+        #self.intersect_kultur()
+        #self.intersect_oeff_dl()
+        #self.intersect_priv_dl()
+        #self.intersect_sport()
+        self.intersect_ov()
+
+    def intersect_ov(self):
+        """Intersect the Bildung shapes with the raster data"""
+        self.intersect_point(schema='timetables',
+                             tablename='anzahl_abfahrten',
+                             value_column='cnt')
 
     def intersect_bildung(self):
         """Intersect the Bildung shapes with the raster data"""
