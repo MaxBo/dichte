@@ -8,16 +8,17 @@ import unicodecsv
 SAGA = '/usr/bin/saga_cmd'
 PROJECT = '/home/ggr/gis/projekte/sh'
 PROJECT_FOLDER = os.path.join(PROJECT, 'tiffs')
-config_file = os.path.join(PROJECT, 'bewertung', 'gewichtung.txt')
+RESULT_FOLDER = '/home/ggr/gis/datenaustausch/SH'
+config_file = os.path.join(RESULT_FOLDER, 'gewichtung.txt')
 einrichtungen_folder = os.path.join(PROJECT_FOLDER, 'einrichtungen')
 smoothed_tiff_folder = os.path.join(PROJECT_FOLDER, 'er_buffer')
 input_saga_folder = os.path.join(PROJECT_FOLDER, 'input_saga')
 resampled_saga_folder = os.path.join(PROJECT_FOLDER, 'input_resampled')
 out_saga_folder = os.path.join(PROJECT_FOLDER, 'er_clipped_saga')
-result_tif_folder = os.path.join(PROJECT_FOLDER, 'er_clipped_tifs')
+result_tif_folder = os.path.join(RESULT_FOLDER, 'er_clipped_tifs')
 
 combine_saga_folder = os.path.join(PROJECT_FOLDER, 'combine_saga')
-combine_tiff_folder = os.path.join(PROJECT_FOLDER, 'combine_tifs')
+combine_tiff_folder = os.path.join(RESULT_FOLDER, 'combine_tifs')
 reference_file = os.path.join(PROJECT_FOLDER, 'reference', 'reference.sgrd')
 
 RADIUS = 10
