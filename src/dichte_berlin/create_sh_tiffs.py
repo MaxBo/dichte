@@ -14,8 +14,15 @@ class Einrichtungen2Raster(Points2Raster):
     schema = 'dichte_ha'
     gridsize = 'ha'
 
-    def process_pointlayer(self, schema, tablename, nodata=-1):
-        #self.intersect_point(tablename, schema)
+    def process_pointlayer(self,
+                           schema,
+                           tablename,
+                           nodata=-1,
+                           value_column=None):
+        """
+        intersect point layer with raster and weight with "value_column"
+        """
+        self.intersect_point(tablename, schema, value_column)
         self.export_geotiff(schema, tablename, nodata)
 
     def intersect_point(self, tablename, schema, value_column=None):
@@ -59,12 +66,12 @@ class Einrichtungen2Raster(Points2Raster):
         """
         define here, what to execute
         """
-        #self.intersect_bildung()
-        #self.intersect_gesundheit()
-        #self.intersect_kultur()
-        #self.intersect_oeff_dl()
-        #self.intersect_priv_dl()
-        #self.intersect_sport()
+        self.intersect_bildung()
+        self.intersect_gesundheit()
+        self.intersect_kultur()
+        self.intersect_oeff_dl()
+        self.intersect_priv_dl()
+        self.intersect_sport()
         self.intersect_ov()
 
     def intersect_ov(self):
@@ -75,27 +82,26 @@ class Einrichtungen2Raster(Points2Raster):
 
     def intersect_bildung(self):
         """Intersect the Bildung shapes with the raster data"""
-        self.process_pointlayer('bildung', 'allgemeinbildende_schulen_oeffentlich')
-        self.process_pointlayer('bildung', 'allgemeinbildende_schulen_privat')
-        self.process_pointlayer('bildung', 'ausserschulische_bildung')
-        self.process_pointlayer('bildung', 'berufsschulen_oeffentlich')
-        self.process_pointlayer('bildung', 'berufsschulen_privat')
+        self.process_pointlayer('bildung', 'allg')
+        self.process_pointlayer('bildung', 'beruf')
         self.process_pointlayer('bildung', 'familienzentren')
         self.process_pointlayer('bildung', 'jugendhilfe_allgemeininfor')
         self.process_pointlayer('bildung', 'kitas')
-        self.process_pointlayer('bildung', 'landesberufsschulen')
         self.process_pointlayer('bildung', 'volkshochschulen')
+        self.process_pointlayer('bildung', 'weiterbildung')
+        self.process_pointlayer('bildung', 'grundschulen')
+        self.process_pointlayer('bildung', 'sek1')
+        self.process_pointlayer('bildung', 'sek2')
+        self.process_pointlayer('bildung', 'foerderschulen')
 
     def intersect_gesundheit(self):
         """Intersect the Gesundheit shapes with the raster data"""
-        self.process_pointlayer('gesundheit', 'geburtenhilfe_belegkliniken')
-        self.process_pointlayer('gesundheit', 'geburtenhilfe_geburtshaeuser')
-        self.process_pointlayer('gesundheit', 'geburtenhilfe_geburtskliniken')
-        self.process_pointlayer('gesundheit', 'krankenhaeuser')
-        self.process_pointlayer('gesundheit', 'krankenhaeuser_privat')
-        self.process_pointlayer('gesundheit', 'pflege_dienste')
+        self.process_pointlayer('gesundheit', 'hausaerzte')
+        self.process_pointlayer('gesundheit', 'geburtshilfe')
+        self.process_pointlayer('gesundheit', 'krhs')
+        #self.process_pointlayer('gesundheit', 'pflege_dienste')
         self.process_pointlayer('gesundheit', 'pflege_heime')
-        self.process_pointlayer('gesundheit', 'pflege_stuetzpunkte')
+        #self.process_pointlayer('gesundheit', 'pflege_stuetzpunkte')
         self.process_pointlayer('gesundheit', 'zahnaerzte')
 
     def intersect_kultur(self):
@@ -126,6 +132,8 @@ class Einrichtungen2Raster(Points2Raster):
         self.process_pointlayer('private_versorgungseinrichtungen', 'geschaefte')
         self.process_pointlayer('private_versorgungseinrichtungen', 'markttreff')
         self.process_pointlayer('private_versorgungseinrichtungen', 'poststellen')
+        self.process_pointlayer('private_versorgungseinrichtungen', 'lebensmittel', value_column='gewicht')
+
 
     def intersect_sport(self):
         """Intersect the Sportanlagen shapes with the raster data"""
