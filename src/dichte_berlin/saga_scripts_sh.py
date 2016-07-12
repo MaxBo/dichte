@@ -28,10 +28,11 @@ FACTORS = {20: 157.0268156729,
 
 def main():
     """"""
-    convert()
+    #convert()
 
-    combine(zentrums_typ='gz')
-    combine(zentrums_typ='mz')
+    combine(zentrums_typ='lzo')
+    #combine(zentrums_typ='gz')
+    #combine(zentrums_typ='mz')
 
 def combine(zentrums_typ):
     factor_name = 'weight_{}'.format(zentrums_typ)
@@ -45,8 +46,22 @@ def combine(zentrums_typ):
         for l in r:
             if l[factor_name]:
                 fn = l['name']
-                sgrd = os.path.join(out_saga_folder,
+                smoothed_file = os.path.join(smoothed_tiff_folder, fn)
+                smoothed_file = os.extsep.join((smoothed_file, 'sgrd'))
+
+                o_folder = '_'.join((out_saga_folder, zentrums_typ))
+                if not os.path.exists(o_folder):
+                    os.mkdir(o_folder)
+
+                max_value = float(l['max_value_{}'.format(zentrums_typ)])
+                out_saga = clip_values(o_folder, fn, smoothed_file,
+                                       max_value)
+
+
+                sgrd = os.path.join(o_folder,
                                     os.extsep.join((fn, 'sgrd')))
+
+
                 #print sgrd
                 i += 1
                 if i == 0:
