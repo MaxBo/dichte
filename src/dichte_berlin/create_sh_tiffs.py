@@ -96,27 +96,29 @@ class Einrichtungen2Raster(Points2Raster):
 
     def intersect_gesundheit(self):
         """Intersect the Gesundheit shapes with the raster data"""
-        self.process_pointlayer('gesundheit', 'hausaerzte')
+        self.process_pointlayer('gesundheit', 'nur_hausaerzte')
+        self.process_pointlayer('gesundheit', 'nur_fachaerzte')
         self.process_pointlayer('gesundheit', 'geburtshilfe')
         self.process_pointlayer('gesundheit', 'krhs')
-        #self.process_pointlayer('gesundheit', 'pflege_dienste')
+        self.process_pointlayer('gesundheit', 'pflege_dienste_neu')
         self.process_pointlayer('gesundheit', 'pflege_heime')
         #self.process_pointlayer('gesundheit', 'pflege_stuetzpunkte')
         self.process_pointlayer('gesundheit', 'zahnaerzte')
 
     def intersect_kultur(self):
         """Intersect the Kultureinrichtungen shapes with the raster data"""
-        self.process_pointlayer('kultureinrichtungen', 'dorfgemeinschaftshaus_mv')
+        #self.process_pointlayer('kultureinrichtungen', 'dorfgemeinschaftshaus_mv')
         self.process_pointlayer('kultureinrichtungen', 'kinos_al')
-        self.process_pointlayer('kultureinrichtungen', 'kinos_osm')
+        #self.process_pointlayer('kultureinrichtungen', 'kinos_osm')
         self.process_pointlayer('kultureinrichtungen', 'theater_konzert_veranstaltung_al')
-        self.process_pointlayer('kultureinrichtungen', 'theater_oper_osm')
+        #self.process_pointlayer('kultureinrichtungen', 'theater_oper_osm')
         self.process_pointlayer('kultureinrichtungen', 'versammlungsstaetten_al')
 
     def intersect_oeff_dl(self):
         """Intersect the öffentlichen Dienstleistungen shapes with the raster data"""
         self.process_pointlayer('oeffentl_dienstleisteinrichtung', 'aemter')
         self.process_pointlayer('oeffentl_dienstleisteinrichtung', 'berufsfeuerwehr')
+        self.process_pointlayer('oeffentl_dienstleisteinrichtung', 'buergerbueros')
         self.process_pointlayer('oeffentl_dienstleisteinrichtung', 'buechereien')
         self.process_pointlayer('oeffentl_dienstleisteinrichtung', 'finanzaemter')
         self.process_pointlayer('oeffentl_dienstleisteinrichtung', 'gerichte')

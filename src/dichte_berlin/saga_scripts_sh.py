@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from grass.script.core import run_command
+#from grass.script.core import run_command
 import os
 import subprocess
 import unicodecsv
 
-SAGA = '/usr/bin/saga_cmd'
+SAGA = '/usr/local/bin/saga_cmd'
 PROJECT = '/home/ggr/gis/projekte/sh'
 PROJECT_FOLDER = os.path.join(PROJECT, 'tiffs')
 RESULT_FOLDER = '/home/ggr/gis/datenaustausch/SH'
@@ -16,6 +16,7 @@ input_saga_folder = os.path.join(PROJECT_FOLDER, 'input_saga')
 resampled_saga_folder = os.path.join(PROJECT_FOLDER, 'input_resampled')
 out_saga_folder = os.path.join(PROJECT_FOLDER, 'er_clipped_saga')
 result_tif_folder = os.path.join(RESULT_FOLDER, 'er_clipped_tifs')
+result_tif_folder_simple = os.path.join(RESULT_FOLDER, 'er_clipped_tifs')
 
 combine_saga_folder = os.path.join(PROJECT_FOLDER, 'combine_saga')
 combine_tiff_folder = os.path.join(RESULT_FOLDER, 'combine_tifs')
@@ -28,11 +29,11 @@ FACTORS = {20: 157.0268156729,
 
 def main():
     """"""
-    #convert()
+    convert()
 
-    combine(zentrums_typ='lzo')
-    #combine(zentrums_typ='gz')
-    #combine(zentrums_typ='mz')
+    combine(zentrums_typ='basis')
+    combine(zentrums_typ='uz')
+    combine(zentrums_typ='mz')
 
 def combine(zentrums_typ):
     factor_name = 'weight_{}'.format(zentrums_typ)
@@ -56,6 +57,8 @@ def combine(zentrums_typ):
                 max_value = float(l['max_value_{}'.format(zentrums_typ)])
                 out_saga = clip_values(o_folder, fn, smoothed_file,
                                        max_value)
+                tif = '{f}_{z}.tif'.format(f=fn, z=zentrums_typ)
+                export_result_to_tif(result_tif_folder, tif, out_saga)
 
 
                 sgrd = os.path.join(o_folder,
@@ -133,11 +136,12 @@ def convert():
 
                 smoothed_file = smooth(smoothed_tiff_folder, fn, resampled_saga_file)
 
-                max_value = float(l['max_value'])
-                out_saga = clip_values(out_saga_folder, fn, smoothed_file,
-                                       max_value)
+                # clipping is done for the differenz levels of centrality seperatedly
+                #max_value = float(l['max_value'])
+                #out_saga = clip_values(out_saga_folder, fn, smoothed_file,
+                                       #max_value)
 
-                export_result_to_tif(result_tif_folder, tif, out_saga)
+                export_result_to_tif(result_tif_folder, tif, smoothed_file)
 
 
 def export_result_to_tif(result_tif_folder, tif, out_saga):
