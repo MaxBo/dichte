@@ -133,15 +133,15 @@ class Einrichtungen2Raster(Points2Raster):
         self.process_pointlayer('private_versorgungseinrichtungen', 'einkaufszentren')
         self.process_pointlayer('private_versorgungseinrichtungen', 'geschaefte')
         self.process_pointlayer('private_versorgungseinrichtungen', 'markttreff')
-        self.process_pointlayer('private_versorgungseinrichtungen', 'poststellen')
+        self.process_pointlayer('private_versorgungseinrichtungen', 'postfilialen')
         self.process_pointlayer('private_versorgungseinrichtungen', 'lebensmittel', value_column='gewicht')
 
 
     def intersect_sport(self):
         """Intersect the Sportanlagen shapes with the raster data"""
         self.process_pointlayer('sportanlagen', 'hallen_plaetze_baeder')
-        #self.process_pointlayer('sportanlagen', 'hallen_baeder_al')
-        #self.process_pointlayer('sportanlagen', 'sportflaechen_al')
+        self.process_pointlayer('sportanlagen', 'hallen_baeder_al')
+        self.process_pointlayer('sportanlagen', 'sportflaechen_al')
 
 
 class Einrichtungen2km2Raster(Einrichtungen2Raster, Points2km2Raster):
