@@ -140,8 +140,8 @@ class Einrichtungen2Raster(Points2Raster):
     def intersect_sport(self):
         """Intersect the Sportanlagen shapes with the raster data"""
         self.process_pointlayer('sportanlagen', 'hallen_plaetze_baeder')
-        self.process_pointlayer('sportanlagen', 'hallen_baeder_al')
-        self.process_pointlayer('sportanlagen', 'sportflaechen_al')
+        #self.process_pointlayer('sportanlagen', 'hallen_baeder_al')
+        #self.process_pointlayer('sportanlagen', 'sportflaechen_al')
 
 
 class Einrichtungen2km2Raster(Einrichtungen2Raster, Points2km2Raster):
